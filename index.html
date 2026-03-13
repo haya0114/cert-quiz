@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Certification Preparation</title>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,700&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,700&family=JetBrains+Mono:wght@400&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{--bg:#f4f6f8;--surface:#ffffff;--surface2:#eef1f5;--border:#d0d7de;--accent:#e05a2b;--accent2:#2f6db5;--accent3:#2a7d4f;--text:#1a1f2e;--text-muted:#6b7280;--wrong:#c0392b;--correct:#2a7d4f;}
@@ -41,19 +41,18 @@
   .quiz-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#2f6db5,#1a4f8a);}
   .question-meta{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
   .chapter-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:10px;letter-spacing:1px;}
-  .option-btn .opt-text{word-break:break-word;overflow-wrap:break-word;white-space:pre-wrap;min-width:0;font-family:'Noto Sans JP',sans-serif;}
   .question-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);color:var(--accent2);padding:3px 10px;border-radius:20px;}
   .multi-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(247,129,102,0.1);border:1px solid var(--accent);color:var(--accent);padding:3px 10px;border-radius:20px;}
   .question-text{font-size:15px;line-height:1.8;margin-bottom:20px;}
   pre.code-block{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:400;line-height:1.7;overflow-x:auto;margin-bottom:20px;}
-  pre.code-block *{font-family:'JetBrains Mono',monospace !important;font-weight:400 !important;font-style:normal !important;}
+  pre.code-block,pre.code-block *{font-weight:400 !important;font-style:normal !important;}
   pre.code-block .line{display:flex;gap:14px;}
   pre.code-block .line-num{color:var(--text-muted);user-select:none;min-width:18px;text-align:right;flex-shrink:0;}
   .options{display:flex;flex-direction:column;gap:10px;}
   .option-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:13px 16px;text-align:left;cursor:pointer;transition:all 0.15s ease;display:flex;align-items:flex-start;gap:12px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:14px;line-height:1.5;width:100%;box-sizing:border-box;overflow:hidden;}
   .option-btn:hover:not(:disabled){border-color:var(--accent2);background:rgba(47,109,181,0.06);transform:translateX(2px);}
   .option-btn .letter{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--accent2);background:rgba(47,109,181,0.08);border-radius:4px;padding:2px 7px;flex-shrink:0;margin-top:1px;}
-
+  .option-btn .opt-text{word-break:break-word;overflow-wrap:break-word;white-space:pre-wrap;min-width:0;font-family:'Noto Sans JP',sans-serif;font-weight:400;}
   .option-btn.selected{border-color:var(--accent2);background:rgba(47,109,181,0.08);}
   .option-btn.correct{border-color:var(--correct);background:rgba(63,185,80,0.1);}
   .option-btn.correct .letter{color:var(--correct);background:rgba(63,185,80,0.15);}
@@ -497,10 +496,9 @@ async function submitAnswer(){
 
   answeredMap[currentIndex]={selected:[...selectedAnswers],isCorrect};
 
-  // user_idがあればuser_idで、なければsession_idで保存
-  const record={question_id:q.id,selected:selectedAnswers,is_correct:isCorrect};
+  // session_idは常にセット、ログイン済みならuser_idも追加
+  const record={question_id:q.id,selected:selectedAnswers,is_correct:isCorrect,session_id:SESSION_ID};
   if(currentUser) record.user_id=currentUser.id;
-  else record.session_id=SESSION_ID;
   const{error:insertErr}=await db.from('answer_history').insert(record);
   if(insertErr) console.error('[履歴保存エラー]',insertErr.message,insertErr);
 }
