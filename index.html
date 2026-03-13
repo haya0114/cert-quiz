@@ -40,19 +40,20 @@
   .quiz-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;max-width:100%;box-sizing:border-box;}
   .quiz-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#2f6db5,#1a4f8a);}
   .question-meta{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
-  .chapter-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:10px;}
+  .chapter-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:10px;letter-spacing:1px;}
+  .option-btn .opt-text{word-break:break-word;overflow-wrap:break-word;white-space:pre-wrap;min-width:0;font-family:'Noto Sans JP',sans-serif;}
   .question-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);color:var(--accent2);padding:3px 10px;border-radius:20px;}
   .multi-badge{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(247,129,102,0.1);border:1px solid var(--accent);color:var(--accent);padding:3px 10px;border-radius:20px;}
   .question-text{font-size:15px;line-height:1.8;margin-bottom:20px;}
-  pre.code-block{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;overflow-x:auto;margin-bottom:20px;font-weight:400;}
+  pre.code-block{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:400;line-height:1.7;overflow-x:auto;margin-bottom:20px;}
+  pre.code-block *{font-family:'JetBrains Mono',monospace !important;font-weight:400 !important;font-style:normal !important;}
   pre.code-block .line{display:flex;gap:14px;}
-  pre.code-block .line-num{color:var(--text-muted);user-select:none;min-width:18px;text-align:right;flex-shrink:0;font-weight:400;}
-  pre.code-block span{font-weight:400 !important;}
+  pre.code-block .line-num{color:var(--text-muted);user-select:none;min-width:18px;text-align:right;flex-shrink:0;}
   .options{display:flex;flex-direction:column;gap:10px;}
   .option-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:13px 16px;text-align:left;cursor:pointer;transition:all 0.15s ease;display:flex;align-items:flex-start;gap:12px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:14px;line-height:1.5;width:100%;box-sizing:border-box;overflow:hidden;}
   .option-btn:hover:not(:disabled){border-color:var(--accent2);background:rgba(47,109,181,0.06);transform:translateX(2px);}
   .option-btn .letter{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--accent2);background:rgba(47,109,181,0.08);border-radius:4px;padding:2px 7px;flex-shrink:0;margin-top:1px;}
-  .option-btn .opt-text{word-break:break-word;overflow-wrap:break-word;white-space:pre-wrap;min-width:0;}
+
   .option-btn.selected{border-color:var(--accent2);background:rgba(47,109,181,0.08);}
   .option-btn.correct{border-color:var(--correct);background:rgba(63,185,80,0.1);}
   .option-btn.correct .letter{color:var(--correct);background:rgba(63,185,80,0.15);}
@@ -418,7 +419,9 @@ function renderQuestion(){
   document.getElementById('progressText').textContent='問題 '+(currentIndex+1)+' / '+questions.length;
   document.getElementById('scoreText').textContent='正解: '+score;
   renderQNav();
-  document.getElementById('chapterLabel').textContent=selectedChapter?(selectedChapter.is_mock?'模擬試験 '+selectedChapter.chapter_no+' ─ '+selectedChapter.title:'第'+selectedChapter.chapter_no+'章 ─ '+selectedChapter.title):'';
+  document.getElementById('chapterLabel').textContent=selectedChapter
+    ?(selectedChapter.is_mock?'模擬試験 '+selectedChapter.chapter_no+' ─ '+selectedChapter.title:'第'+selectedChapter.chapter_no+'章 ─ '+selectedChapter.title)
+    :'';
   document.getElementById('questionBadge').textContent='問題 '+q.question_no;
   document.getElementById('multiBadge').style.display=q.multi?'inline-block':'none';
   document.getElementById('questionText').innerHTML=escHtml(q.text).replace(/\n/g,'<br>');
@@ -426,7 +429,7 @@ function renderQuestion(){
   if(q.code){cb.style.display='block';cb.innerHTML=q.code.split('\n').map((l,i)=>'<div class="line"><span class="line-num">'+(i+1)+'</span><span>'+escHtml(l)+'</span></div>').join('');}
   else{cb.style.display='none';}
   document.getElementById('optionsContainer').innerHTML=q.options.map(o=>
-    '<button class="option-btn" id="opt-'+o.letter+'" onclick="selectOption(\''+o.letter+'\')"><span class="letter">'+o.letter+'</span><span>'+escHtml(o.text).replace(/\n/g,'<br>')+'</span></button>'
+    '<button class="option-btn" id="opt-'+o.letter+'" onclick="selectOption(\''+o.letter+'\')"><span class="letter">'+o.letter+'</span><span class="opt-text">'+escHtml(o.text).replace(/\n/g,'<br>')+'</span></button>'
   ).join('');
 
   if(prev){
